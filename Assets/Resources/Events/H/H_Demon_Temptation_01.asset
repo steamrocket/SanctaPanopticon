@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95156a81e4319d04bb636abfebc4e732, type: 3}
+  m_Name: H_Demon_Temptation_01
+  m_EditorClassIdentifier: 
+  eventID: 
+  eventType: 1
+  description: "\u56C1\u304D\u304C\u8133\u88CF\u306B\u76F4\u63A5\u6D41\u308C\u8FBC\u3080\u2015\u2015\u62D2\u3081\u3070\u3001\u3082\u3063\u3068\u9177\u3044\u3053\u3068\u306B\u306A\u308B\u3002"
+  choices:
+  - choiceText: "\u53D7\u3051\u5165\u308C\u308B"
+    effects:
+    - effectType: 0
+      target: 0
+      value: 0
+    nextEventID: 
+  - choiceText: "\u62D2\u5426\u3059\u308B"
+    effects: []
+    nextEventID: 
+  condition:
+    minFaith: 0
+    minStigma: 0
+    requireCorrupted: 0

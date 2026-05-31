@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95156a81e4319d04bb636abfebc4e732, type: 3}
+  m_Name: "\u63A2\u7D22\u4E2D\uFF08\u30A2\u30A4\u30C6\u30E0\uFF09"
+  m_EditorClassIdentifier: 
+  eventID: Abbey_Search
+  eventType: 3
+  description: "\u5D29\u308C\u305F\u793C\u62DD\u5802\u306E\u5965\u3067\u3001\u5C0F\u3055\u306A\u7BB1\u3092\u898B\u3064\u3051\u305F\u3002\r\n\u4E2D\u306B\u306F\u53E4\u3044\u8056\u6CB9\u304C\u6B8B\u3055\u308C\u3066\u3044\u308B\u3002"
+  choices:
+  - choiceText: "\u8056\u6CB9\u3092\u6301\u3061\u5E30\u308B"
+    faithChange: 0
+    stigmaChange: 0
+    nextEventID: Abbey_Battle
+    effects:
+    - effectType: 3
+      target: 0
+      value: 1
+    - effectType: 0
+      target: 0
+      value: 1
+  - choiceText: "\u6C17\u5473\u304C\u60AA\u3044\u3001\u89E6\u3089\u305A\u306B\u9032\u3080"
+    faithChange: 0
+    stigmaChange: 0
+    nextEventID: Abbey_Battle
+    effects:
+    - effectType: 3
+      target: 0
+      value: 0
+  condition:
+    minFaith: 0
+    minStigma: 0
+    requireCorrupted: 0
