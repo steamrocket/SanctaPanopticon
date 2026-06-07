@@ -17,8 +17,3 @@ MonoBehaviour:
   description: 
   initialEventIDs:
   - Abbey_Enter
-  - Abbey_Search
-  - Abbey_Battle
-  - Abbey_Exit
-  - Abbey_AfterBattle
-  - Abbey_BattleStart
