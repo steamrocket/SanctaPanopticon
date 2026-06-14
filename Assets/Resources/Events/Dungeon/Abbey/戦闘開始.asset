@@ -15,7 +15,12 @@ MonoBehaviour:
   eventID: Abbey_BattleStart
   eventType: 0
   description: 
-  choices: []
+  choices:
+  - choiceText:
+    faithChange: 0
+    stigmaChange: 0
+    nextEventID: Abbey_AfterBattle
+    effects: []
   condition:
     minFaith: 0
     minStigma: 0
