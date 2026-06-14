@@ -2,11 +2,6 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-
-        if (EventManager.Instance != null)
-        {
-            EventManager.Instance.BindEventView(this);
-        }
 // イベントの表示と選択肢の管理を行うクラス
 //EventView は ただの表示装置（EventPanel にアタッチする制御役）
 // EventManager からイベントデータを受け取り、UIに表示し、選択肢が選ばれたら EventManager に通知する
@@ -21,6 +16,11 @@ public class EventView : MonoBehaviour
     private void Awake()
     {
         eventManager = FindObjectOfType<EventManager>();
+
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.BindEventView(this);
+        }
     }
 
     // イベントデータを受け取り、表示を更新する

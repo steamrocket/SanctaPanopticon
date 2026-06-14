@@ -3,13 +3,57 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+// 世界で起きる「出来事」を、すべて同じ形式で処理するクラス（世界の交通整理係）
+// 今何が起きているのか？　次に何が起きるのか？　を管理するクラス
+//　EventManagerの責務は4つ
+//　１．EventData を受け取る
+//　2．表示する（UIに投げる）
+//　3．選択肢を GameManager に渡す
+//　4．次の Event を要求する
+public class EventManager : MonoBehaviour
+{
+    public static EventManager Instance;
 
+    [SerializeField] private EventView eventView;
+
+    [SerializeField] private EventDatabase eventDatabase;
+
+    private EventData currentEvent;
+
+    
     public void BindEventView(EventView view)
     {
         eventView = view;
     }
 
+    public void StartEvent(EventData eventData)
+    {
+        currentEvent = eventData;
+
+        switch (eventData.eventType)
+        {
+            case EventType.Story:
+            case EventType.H:
+            case EventType.Item:
+                // eventView.ShowEvent(eventData);
                 ShowEventView(eventData);
+                break;
+
+            case EventType.Battle:
+                StartBattle(eventData);
+                break;
+        }
+    }
+
+     private void StartBattle(EventData battleEvent)
+    {
+        Debug.Log("ShowEvent Battle: " + battleEvent);
+
+        // 
+        // var next = battleEvent.choices[0].nextEventID;
+        // 
+        // DungeonManager.Instance.EnqueueNextEvent(next);
+
         string nextEventID = GetBattleNextEventID(battleEvent);
         if (!string.IsNullOrEmpty(nextEventID) && DungeonManager.Instance != null)
         {
@@ -19,7 +63,7 @@ using UnityEngine.SceneManagement;
         SceneManager.LoadScene("BattleScene");
     }
 
-    private void ShowEventView(EventData eventData)
+     private void ShowEventView(EventData eventData)
     {
         if (eventView == null)
         {
@@ -35,7 +79,7 @@ using UnityEngine.SceneManagement;
         eventView.ShowEvent(eventData);
     }
 
-    private string GetBattleNextEventID(EventData battleEvent)
+     private string GetBattleNextEventID(EventData battleEvent)
     {
         if (battleEvent.choices == null || battleEvent.choices.Count == 0)
         {
@@ -48,45 +92,10 @@ using UnityEngine.SceneManagement;
         {
             Debug.LogError("Battle event nextEventID is empty: " + battleEvent.eventID);
         }
+
+        // 
+        // SceneManager.LoadScene("BattleScene"); // 
         return nextEventID;
-{
-    public static EventManager Instance;
-
-    [SerializeField] private EventView eventView;
-
-    [SerializeField] private EventDatabase eventDatabase;
-
-    private EventData currentEvent;
-
-    public void StartEvent(EventData eventData)
-    {
-        currentEvent = eventData;
-
-        switch (eventData.eventType)
-        {
-            case EventType.Story:
-            case EventType.H:
-            case EventType.Item:
-                eventView.ShowEvent(eventData);
-                break;
-
-            case EventType.Battle:
-                StartBattle(eventData);
-                break;
-        }
-    }
-
-    private void StartBattle(EventData battleEvent)
-    {
-        Debug.Log("ShowEvent Battle: " + battleEvent);
-
-        // 状態変化
-        var next = battleEvent.choices[0].nextEventID;
-        // 次のイベントをキューに追加する
-        DungeonManager.Instance.EnqueueNextEvent(next);
-
-        // 仮実装：戦闘シーン遷移
-        SceneManager.LoadScene("BattleScene"); // 仮シーン
     }
 
     // シングルトンの初期化
@@ -121,7 +130,7 @@ using UnityEngine.SceneManagement;
         if (!string.IsNullOrEmpty(choice.nextEventID))
         {
             StartEventByID(choice.nextEventID);
-            DungeonManager.Instance.RequestNextEvent(choice.nextEventID);
+            // DungeonManager.Instance.RequestNextEvent(choice.nextEventID);
         }
         else
         {

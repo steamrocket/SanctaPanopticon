@@ -1,21 +1,7 @@
+//using System.Diagnostics;
 using UnityEngine;
 
 /// <summary>
-    private static string pendingEventOnNextDungeonStart;
-    public bool HasActiveDungeon => currentDungeonState != null;
-
-    public static void QueueEventOnNextDungeonStart(string eventID)
-    {
-        pendingEventOnNextDungeonStart = eventID;
-    }
-        if (!string.IsNullOrEmpty(pendingEventOnNextDungeonStart))
-        {
-            currentDungeonState.Enqueue(pendingEventOnNextDungeonStart);
-            pendingEventOnNextDungeonStart = null;
-            ProceedNextEvent();
-            return;
-        }
-
 /// ダンジョンの進行を管理するクラス
 /// </summary>
 
@@ -29,8 +15,17 @@ public class DungeonManager : MonoBehaviour
     // 戦闘シーンから戻ってきたときに、次のイベントを開始するためのフラグ。戦闘シーンから戻ったときに Start() でこのフラグをチェックし、次のイベントを開始する。
     private bool resumeAfterBattle = false;
 
+    private static string pendingEventOnNextDungeonStart;
+
     // ダンジョン内にいるかどうかのフラグ。これも戦闘シーンから戻ってきたときに、ダンジョン内にいるかどうかを判断するために使用する。
     public bool IsInDungeon = true;
+
+    public bool HasActiveDungeon => currentDungeonState != null;
+
+    public static void QueueEventOnNextDungeonStart(string eventID)
+    {
+        pendingEventOnNextDungeonStart = eventID;
+    }
 
     [SerializeField] private EventDatabase eventDatabase;
 
@@ -57,6 +52,14 @@ public class DungeonManager : MonoBehaviour
     public void StartDungeon(DungeonData dungeon)
     {
         currentDungeonState = new DungeonRunState();
+
+        if (!string.IsNullOrEmpty(pendingEventOnNextDungeonStart))
+        {
+            currentDungeonState.Enqueue(pendingEventOnNextDungeonStart);
+            pendingEventOnNextDungeonStart = null;
+            ProceedNextEvent();
+            return;
+        }
 
         foreach (string id in dungeon.initialEventIDs)
         {
@@ -91,21 +94,11 @@ public class DungeonManager : MonoBehaviour
     }
 
     /// <summary>
-        if (string.IsNullOrEmpty(eventID))
-        {
-            Debug.LogError("EventID is empty.");
-            return;
-        }
-
-        if (next == null)
-            Debug.LogError("Event not found: " + eventID);
-            return;
-        if (currentDungeonState == null)
-        {
-            Debug.LogError("Cannot resume after battle because dungeon state is not initialized.");
-            return;
-        }
-
+    ///
+    /// </summary>
+    public void ProceedNextEvent()
+    {
+        if (!currentDungeonState.HasNext())
         {
             Debug.Log("Dungeon Complete!");
             return;
@@ -123,15 +116,24 @@ public class DungeonManager : MonoBehaviour
     /// <param name="eventID"></param>
     public void RequestNextEvent(string eventID)
     {
-        string nextID = currentDungeonState.Dequeue();
+        // string nextID = currentDungeonState.Dequeue();
+
+        if (string.IsNullOrEmpty(eventID))
+        {
+            Debug.LogError("EventID is empty.");
+            return;
+        }
+
         Debug.Log("Next EventID: " + eventID);
 
         EventData next = eventDatabase.GetEvent(eventID);
 
 
-        if (eventID == null)
+        if (next == null)
         {
-            Debug.LogError("Event not found: " + nextID);
+            // Debug.LogError("Event not found: " + nextID);
+             Debug.LogError("Event not found: " + eventID);
+            return;
         }
 
         EventManager.Instance.StartEvent(next);
@@ -142,6 +144,12 @@ public class DungeonManager : MonoBehaviour
     /// </summary>
     public void ResumeAfterBattle()
     {
+        if (currentDungeonState == null)
+        {
+            Debug.LogError("Cannot resume after battle because dungeon state is not initialized.");
+            return;
+        }
+
         ProceedNextEvent();
     }
 

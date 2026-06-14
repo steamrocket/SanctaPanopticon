@@ -2,21 +2,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-    [SerializeField] private string standaloneAfterBattleEventID = "Abbey_AfterBattle";
-
-        bool hasActiveDungeon = DungeonManager.Instance != null && DungeonManager.Instance.HasActiveDungeon;
-        if (!hasActiveDungeon)
-        {
-            DungeonManager.QueueEventOnNextDungeonStart(standaloneAfterBattleEventID);
-        }
-
-        if (hasActiveDungeon)
-        {
-            DungeonManager.Instance.ResumeAfterBattle();
-        }
+/// 戦闘シーンを管理するクラス。プレイヤーの攻撃、敵の攻撃、勝利条件などを処理する。
 /// </summary>
 public class BattleManager : MonoBehaviour
 {
+    [SerializeField] private string standaloneAfterBattleEventID = "Abbey_AfterBattle";
+
     int enemyHP = 10; // 仮の敵HP。実際にはイベントデータから取得するべき。
 
     /// <summary>
@@ -51,9 +42,21 @@ public class BattleManager : MonoBehaviour
     {
         Debug.Log("Battle Win");
 
+        bool hasActiveDungeon = DungeonManager.Instance != null && DungeonManager.Instance.HasActiveDungeon;
+
+        if (!hasActiveDungeon)
+        {
+            DungeonManager.QueueEventOnNextDungeonStart(standaloneAfterBattleEventID);
+        }
+
         SceneManager.LoadScene("MainScene");
 
-        DungeonManager.Instance.ResumeAfterBattle();
+        // DungeonManager.Instance.ResumeAfterBattle();
+
+        if (hasActiveDungeon)
+        {
+            DungeonManager.Instance.ResumeAfterBattle();
+        }
 
     }
 }

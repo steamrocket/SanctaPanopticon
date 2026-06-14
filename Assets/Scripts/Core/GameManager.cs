@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+//using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -86,6 +87,15 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("GameOverScene"); // 仮シーン
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    private void GameOver()
+    {
+        Debug.Log("Game Over");
+        SceneManager.LoadScene("GameOverScene"); // V[
+    }
+
     //セーブ・ロードの窓口
     //public void SaveGame();
     //public void LoadGame();
@@ -98,10 +108,10 @@ public class GameManager : MonoBehaviour
         InitPlayer();
         DungeonManager.Instance.StartDungeon(testDungeon);
 
-        if (DungeonManager.Instance.IsInDungeon)
-        {
-            DungeonManager.Instance.ResumeAfterBattle();
-        }
+        //if (DungeonManager.Instance.IsInDungeon)
+        //{
+        //    DungeonManager.Instance.ResumeAfterBattle();
+        //}
     }
 
     // Update is called once per frame
@@ -135,7 +145,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Faith: " + faith);
         Debug.Log("Stigma: " + stigma);
 
-        DungeonManager.Instance.ProceedNextEvent();
+        //DungeonManager.Instance.ProceedNextEvent();
     }
 
 }
