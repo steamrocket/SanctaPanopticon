@@ -49,14 +49,16 @@ public class BattleManager : MonoBehaviour
             DungeonManager.QueueEventOnNextDungeonStart(standaloneAfterBattleEventID);
         }
 
-        SceneManager.LoadScene("MainScene");
+        // SceneManager.LoadScene("MainScene");
 
         // DungeonManager.Instance.ResumeAfterBattle();
 
         if (hasActiveDungeon)
         {
-            DungeonManager.Instance.ResumeAfterBattle();
+            //DungeonManager.Instance.ResumeAfterBattle();
+            DungeonManager.Instance.SetResumeAfterBattle();
         }
 
+        SceneManager.LoadScene("MainScene");
     }
 }

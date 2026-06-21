@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+//using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,20 +15,35 @@ public class EventManager : MonoBehaviour
 {
     public static EventManager Instance;
 
+    // 現在のイベントを保持する変数。現在進行中のイベントのデータを保持するために使用される。
     [SerializeField] private EventView eventView;
-
+    // イベントデータベースへの参照。イベントIDからイベントデータを取得するために使用される。
     [SerializeField] private EventDatabase eventDatabase;
 
     private EventData currentEvent;
 
-    
+    /// <summary>
+    /// EventView をバインドする関数。EventView は、イベントの内容を表示するためのUIコンポーネントであり、EventManager はこの関数を通じて EventView を参照できるようになる。
+    /// </summary>
+    /// <param name="view"></param>
     public void BindEventView(EventView view)
     {
         eventView = view;
     }
 
+    /// <summary>
+    /// イベントを開始する関数。EventData を受け取り、その内容に応じて適切な処理を行う。イベントの種類に応じて、EventView に表示するか、戦闘シーンに遷移するかなどの処理が行われる。
+    /// </summary>
+    /// <param name="eventData"></param>
     public void StartEvent(EventData eventData)
     {
+        if (eventData == null)
+        {
+            Debug.LogError("Cannot start event because EventData is null.");
+            return;
+        }
+
+        
         currentEvent = eventData;
 
         switch (eventData.eventType)
@@ -45,7 +61,11 @@ public class EventManager : MonoBehaviour
         }
     }
 
-     private void StartBattle(EventData battleEvent)
+    /// <summary>
+    /// 戦闘イベントを開始する関数。Battle イベントが開始されたときに呼び出され、戦闘シーンに遷移する処理を行う。また、戦闘イベントの次のイベントIDを取得し、DungeonManager に次のイベントを要求する処理も行う。
+    /// </summary>
+    /// <param name="battleEvent"></param>
+    private void StartBattle(EventData battleEvent)
     {
         Debug.Log("ShowEvent Battle: " + battleEvent);
 
@@ -63,11 +83,16 @@ public class EventManager : MonoBehaviour
         SceneManager.LoadScene("BattleScene");
     }
 
-     private void ShowEventView(EventData eventData)
+    /// <summary>
+    /// イベントを EventView に表示する関数。EventData を受け取り、その内容を EventView に表示するための処理を行う。EventView がまだ参照されていない場合は、シーン内から EventView を検索して参照を取得する処理も行う。
+    /// </summary>
+    /// <param name="eventData"></param>
+    private void ShowEventView(EventData eventData)
     {
         if (eventView == null)
         {
-            eventView = FindObjectOfType<EventView>();
+            // eventView = FindObjectOfType<EventView>();
+            eventView = FindObjectOfType<EventView>(true);
         }
 
         if (eventView == null)
@@ -79,7 +104,12 @@ public class EventManager : MonoBehaviour
         eventView.ShowEvent(eventData);
     }
 
-     private string GetBattleNextEventID(EventData battleEvent)
+    /// <summary>
+    /// 戦闘イベントの次のイベントIDを取得する関数。Battle イベントの EventData を受け取り、その中から次のイベントIDを取得する処理を行う。次のイベントIDが存在しない場合や、空の場合はエラーログを出力する。
+    /// </summary>
+    /// <param name="battleEvent"></param>
+    /// <returns></returns>
+    private string GetBattleNextEventID(EventData battleEvent)
     {
         if (battleEvent.choices == null || battleEvent.choices.Count == 0)
         {
@@ -98,7 +128,9 @@ public class EventManager : MonoBehaviour
         return nextEventID;
     }
 
-    // シングルトンの初期化
+    /// <summary>
+    /// EventManager のインスタンスを初期化する関数。シングルトンパターンを使用して、EventManager のインスタンスが複数存在しないようにする処理を行う。また、シーンが切り替わっても EventManager のインスタンスが破棄されないようにする処理も行う。
+    /// </summary>
     private void Awake()
     {
         if (Instance == null)
@@ -110,6 +142,32 @@ public class EventManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    /// <summary>
+    /// シーンがロードされたときに呼び出される関数。SceneManager.sceneLoaded イベントに登録されており、シーンが切り替わるたびに呼び出される。シーンが切り替わった後に EventView を再度検索して参照を取得する処理を行う。
+    /// </summary>
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーンがアンロードされたときに呼び出される関数。SceneManager.sceneLoaded イベントから登録を解除する処理を行う。これにより、シーンが切り替わった後に OnSceneLoaded 関数が呼び出されないようにする。
+    /// </summary>
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーンがロードされたときに呼び出される関数。SceneManager.sceneLoaded イベントに登録されており、シーンが切り替わるたびに呼び出される。シーンが切り替わった後に EventView を再度検索して参照を取得する処理を行う。
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        eventView = FindObjectOfType<EventView>(true);
     }
 
     // ★ここが入口

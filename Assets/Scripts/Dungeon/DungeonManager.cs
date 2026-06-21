@@ -1,5 +1,7 @@
 //using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 /// <summary>
 /// ダンジョンの進行を管理するクラス
@@ -46,6 +48,40 @@ public class DungeonManager : MonoBehaviour
     }
 
     /// <summary>
+    /// シーンがロードされたときに呼び出される関数。シーンのロードイベントに OnSceneLoaded 関数を登録する。
+    /// </summary>
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーンがアンロードされたときに呼び出される関数。シーンのロードイベントから OnSceneLoaded 関数を解除する。
+    /// </summary>
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーンがロードされたときに呼び出される関数。resumeAfterBattle フラグが true で、ロードされたシーンが "MainScene" の場合、次のイベントを開始する。
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (!resumeAfterBattle || scene.name != "MainScene")
+        {
+            return;
+        }
+
+        Debug.Log("Resume After Battle");
+
+        resumeAfterBattle = false;
+        ResumeAfterBattle();
+    }
+
+    /// <summary>
     /// ダンジョンを開始する。DungeonData に基づいて DungeonRunState を初期化し、最初のイベントを開始する。
     /// </summary>
     /// <param name="dungeon"></param>
@@ -84,17 +120,18 @@ public class DungeonManager : MonoBehaviour
     {
         Debug.Log("DungeonManager Start");
 
-        if (resumeAfterBattle)
+        if (resumeAfterBattle && SceneManager.GetActiveScene().name == "MainScene")
         {
             Debug.Log("Resume After Battle");
 
             resumeAfterBattle = false;
-            ProceedNextEvent();
+            //ProceedNextEvent();
+            ResumeAfterBattle();
         }
     }
 
     /// <summary>
-    ///
+    /// 次のイベントを開始する関数。DungeonRunState から次のイベントIDを取得し、EventManager に渡して次のイベントを開始させる。
     /// </summary>
     public void ProceedNextEvent()
     {
